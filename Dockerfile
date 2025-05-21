@@ -8,6 +8,8 @@ WORKDIR /app
 # 拷贝 requirements.txt 到镜像中
 COPY requirements.txt .
 
+RUN python -m pip install --upgrade pip
+
 # 安装 requirements.txt 中列出的所有依赖库
 RUN pip install -r requirements.txt
 
