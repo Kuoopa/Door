@@ -4,6 +4,14 @@ FROM python:3.11-slim
 # 设置容器内的工作目录
 WORKDIR /app
 
+# 替换 apt 源为你自定义的 sources.list
+COPY sources.list /etc/apt/sources.list
+
+# 安装字体和字体配置相关依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fonts-noto-cjk \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/*
 
 # 拷贝 requirements.txt 到镜像中
 COPY requirements.txt .
