@@ -3,5 +3,8 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.11 (python project)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.11.12 Docker (imaginepp:latest) (4)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 virtualenv at D:\python project\.venv" project-jdk-type="Python SDK" />
+  <component name="PythonCompatibilityInspectionAdvertiser">
+    <option name="version" value="3" />
+  </component>
 </project>
