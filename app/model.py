@@ -1,20 +1,40 @@
+from __future__ import annotations
+
+import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
-def train_and_evaluate(X, y, test_size=0.3, random_state=42):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-    model = RandomForestRegressor(n_estimators=100, random_state=random_state)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
+class ResidualWindCorrector:
+    def __init__(self, random_state: int = 42):
+        self.model = RandomForestRegressor(
+            n_estimators=420,
+            max_depth=18,
+            min_samples_split=6,
+            min_samples_leaf=2,
+            max_features="sqrt",
+            n_jobs=-1,
+            random_state=random_state,
+        )
+        self.feature_importances_ = None
 
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+    def fit(self, X, y_true, measured_wind):
+        residual = np.asarray(y_true) - np.asarray(measured_wind)
+        self.model.fit(X, residual)
+        self.feature_importances_ = self.model.feature_importances_
+        return self
 
-    print(f"均方误差（MSE）：{mse:.4f}")
-    print(f"R² 得分：{r2:.4f}")
+    def predict(self, X, measured_wind):
+        pred_residual = self.model.predict(X)
+        return np.asarray(measured_wind) + pred_residual
 
-    return y_test, y_pred, r2
+
+
+def evaluate_predictions(y_true, y_pred):
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    return {
+        "mae": mean_absolute_error(y_true, y_pred),
+        "rmse": np.sqrt(mean_squared_error(y_true, y_pred)),
+        "r2": r2_score(y_true, y_pred),
+    }
